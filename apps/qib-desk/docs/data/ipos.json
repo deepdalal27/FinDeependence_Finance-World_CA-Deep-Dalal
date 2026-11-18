@@ -2,23 +2,155 @@
   "updated": "2026-11-18T17:39+05:30",
   "source": "IPO Premium (www.ipopremium.in) + data/overrides.json",
   "health": {
-    "checked": "2026-11-18T17:39+05:30",
-    "ok": true,
-    "problems": [],
+    "checked": "2026-11-19T00:45+05:30",
+    "ok": false,
+    "problems": [
+      "Mahanadi Coalfields: open but missing qib_times"
+    ],
     "counts": {
-      "open_main": 3,
-      "upcoming_main": 2,
-      "upcoming_sme": 1,
+      "open_sme": 1,
+      "open_main": 4,
+      "upcoming_main": 1,
       "listed_sme": 17,
       "listed_main": 13
-    },
-    "list_pages_ok": 2,
-    "list_rows": 30,
-    "details_ok": 9,
-    "details_failed": [],
-    "refreshed_off_list": 2
+    }
   },
   "ipos": {
+    "watrana-rentals": {
+      "slug": "watrana-rentals",
+      "first_seen": "2026-11-13T14:11+05:30",
+      "sources": [
+        "https://www.ipopremium.in/view/ipo/1439/watrana-rentals-ltd"
+      ],
+      "name": "Watrana Rentals Ltd",
+      "url": "https://www.ipopremium.in/view/ipo/1439/watrana-rentals-ltd",
+      "is_sme": true,
+      "exchange_tag": "NSE SME",
+      "gmp": 37.0,
+      "price_band_low": 232.0,
+      "price_band_high": 245.0,
+      "open_date": "2026-11-19",
+      "close_date": "2026-11-23",
+      "listing_date": "2026-11-27",
+      "lot_size": 600.0,
+      "allotment_date": "2026-11-25",
+      "exchange": "NSE SME",
+      "site_status": "upcoming",
+      "anchor_shares": 1386000.0,
+      "qib_shares_offered": 936000.0,
+      "last_seen": "2026-11-18T17:39+05:30",
+      "status": "open",
+      "gmp_history": [
+        {
+          "at": "2026-11-13T14:11+05:30",
+          "gmp": 0.0
+        },
+        {
+          "at": "2026-11-14T00:12+05:30",
+          "gmp": 16.0
+        },
+        {
+          "at": "2026-11-14T13:27+05:30",
+          "gmp": 18.0
+        },
+        {
+          "at": "2026-11-15T13:53+05:30",
+          "gmp": 22.0
+        },
+        {
+          "at": "2026-11-16T17:28+05:30",
+          "gmp": 25.0
+        },
+        {
+          "at": "2026-11-18T14:31+05:30",
+          "gmp": 37.0
+        }
+      ],
+      "effective": {
+        "issue_price": 245.0,
+        "mf_demand_shares": null,
+        "lot_size": 600.0,
+        "net_qib_shares": 936000.0,
+        "qib_times": null,
+        "listing_price": null,
+        "valid_demand_shares": null
+      }
+    },
+    "mahanadi-coalfields": {
+      "slug": "mahanadi-coalfields",
+      "first_seen": "2026-11-14T00:12+05:30",
+      "sources": [
+        "https://www.ipopremium.in/view/ipo/1434/mahanadi-coalfields"
+      ],
+      "name": "Mahanadi Coalfields",
+      "url": "https://www.ipopremium.in/view/ipo/1434/mahanadi-coalfields",
+      "is_sme": false,
+      "exchange_tag": "Mainboard",
+      "gmp": 3.1,
+      "price_band_low": 129.0,
+      "price_band_high": 136.0,
+      "open_date": "2026-11-19",
+      "close_date": "2026-11-23",
+      "listing_date": "2026-11-27",
+      "allotment_date": "2026-11-25",
+      "exchange": "NSE,BSE",
+      "site_status": "upcoming",
+      "last_seen": "2026-11-18T17:39+05:30",
+      "status": "open",
+      "gmp_history": [
+        {
+          "at": "2026-11-14T00:12+05:30",
+          "gmp": 20.0
+        },
+        {
+          "at": "2026-11-14T13:27+05:30",
+          "gmp": 12.5
+        },
+        {
+          "at": "2026-11-15T13:53+05:30",
+          "gmp": 7.75
+        },
+        {
+          "at": "2026-11-16T14:01+05:30",
+          "gmp": 5.5
+        },
+        {
+          "at": "2026-11-16T17:28+05:30",
+          "gmp": 4.3
+        },
+        {
+          "at": "2026-11-17T03:57+05:30",
+          "gmp": 3.5
+        },
+        {
+          "at": "2026-11-17T15:11+05:30",
+          "gmp": 4.0
+        },
+        {
+          "at": "2026-11-18T02:46+05:30",
+          "gmp": 3.65
+        },
+        {
+          "at": "2026-11-18T04:36+05:30",
+          "gmp": 3.75
+        },
+        {
+          "at": "2026-11-18T14:31+05:30",
+          "gmp": 3.1
+        }
+      ],
+      "effective": {
+        "issue_price": 136.0,
+        "mf_demand_shares": null,
+        "lot_size": 110.0,
+        "net_qib_shares": 281280428.0,
+        "qib_times": null,
+        "listing_price": null,
+        "valid_demand_shares": null
+      },
+      "lot_size": 110.0,
+      "qib_shares_offered": 281280428.0
+    },
     "crystal-crop-protection-tentative-date": {
       "slug": "crystal-crop-protection-tentative-date",
       "first_seen": "2026-11-11T13:46+05:30",
@@ -488,141 +620,6 @@
         "listing_price": null,
         "valid_demand_shares": null
       }
-    },
-    "watrana-rentals": {
-      "slug": "watrana-rentals",
-      "first_seen": "2026-11-13T14:11+05:30",
-      "sources": [
-        "https://www.ipopremium.in/view/ipo/1439/watrana-rentals-ltd"
-      ],
-      "name": "Watrana Rentals Ltd",
-      "url": "https://www.ipopremium.in/view/ipo/1439/watrana-rentals-ltd",
-      "is_sme": true,
-      "exchange_tag": "NSE SME",
-      "gmp": 37.0,
-      "price_band_low": 232.0,
-      "price_band_high": 245.0,
-      "open_date": "2026-11-19",
-      "close_date": "2026-11-23",
-      "listing_date": "2026-11-27",
-      "lot_size": 600.0,
-      "allotment_date": "2026-11-25",
-      "exchange": "NSE SME",
-      "site_status": "upcoming",
-      "anchor_shares": 1386000.0,
-      "qib_shares_offered": 936000.0,
-      "last_seen": "2026-11-18T17:39+05:30",
-      "status": "upcoming",
-      "gmp_history": [
-        {
-          "at": "2026-11-13T14:11+05:30",
-          "gmp": 0.0
-        },
-        {
-          "at": "2026-11-14T00:12+05:30",
-          "gmp": 16.0
-        },
-        {
-          "at": "2026-11-14T13:27+05:30",
-          "gmp": 18.0
-        },
-        {
-          "at": "2026-11-15T13:53+05:30",
-          "gmp": 22.0
-        },
-        {
-          "at": "2026-11-16T17:28+05:30",
-          "gmp": 25.0
-        },
-        {
-          "at": "2026-11-18T14:31+05:30",
-          "gmp": 37.0
-        }
-      ],
-      "effective": {
-        "issue_price": 245.0,
-        "mf_demand_shares": null,
-        "lot_size": 600.0,
-        "net_qib_shares": 936000.0,
-        "qib_times": null,
-        "listing_price": null,
-        "valid_demand_shares": null
-      }
-    },
-    "mahanadi-coalfields": {
-      "slug": "mahanadi-coalfields",
-      "first_seen": "2026-11-14T00:12+05:30",
-      "sources": [
-        "https://www.ipopremium.in/view/ipo/1434/mahanadi-coalfields"
-      ],
-      "name": "Mahanadi Coalfields",
-      "url": "https://www.ipopremium.in/view/ipo/1434/mahanadi-coalfields",
-      "is_sme": false,
-      "exchange_tag": "Mainboard",
-      "gmp": 3.1,
-      "price_band_low": 129.0,
-      "price_band_high": 136.0,
-      "open_date": "2026-11-19",
-      "close_date": "2026-11-23",
-      "listing_date": "2026-11-27",
-      "allotment_date": "2026-11-25",
-      "exchange": "NSE,BSE",
-      "site_status": "upcoming",
-      "last_seen": "2026-11-18T17:39+05:30",
-      "status": "upcoming",
-      "gmp_history": [
-        {
-          "at": "2026-11-14T00:12+05:30",
-          "gmp": 20.0
-        },
-        {
-          "at": "2026-11-14T13:27+05:30",
-          "gmp": 12.5
-        },
-        {
-          "at": "2026-11-15T13:53+05:30",
-          "gmp": 7.75
-        },
-        {
-          "at": "2026-11-16T14:01+05:30",
-          "gmp": 5.5
-        },
-        {
-          "at": "2026-11-16T17:28+05:30",
-          "gmp": 4.3
-        },
-        {
-          "at": "2026-11-17T03:57+05:30",
-          "gmp": 3.5
-        },
-        {
-          "at": "2026-11-17T15:11+05:30",
-          "gmp": 4.0
-        },
-        {
-          "at": "2026-11-18T02:46+05:30",
-          "gmp": 3.65
-        },
-        {
-          "at": "2026-11-18T04:36+05:30",
-          "gmp": 3.75
-        },
-        {
-          "at": "2026-11-18T14:31+05:30",
-          "gmp": 3.1
-        }
-      ],
-      "effective": {
-        "issue_price": 136.0,
-        "mf_demand_shares": null,
-        "lot_size": 110.0,
-        "net_qib_shares": 281280428.0,
-        "qib_times": null,
-        "listing_price": null,
-        "valid_demand_shares": null
-      },
-      "lot_size": 110.0,
-      "qib_shares_offered": 281280428.0
     },
     "vedant-poly-fabs": {
       "slug": "vedant-poly-fabs",
