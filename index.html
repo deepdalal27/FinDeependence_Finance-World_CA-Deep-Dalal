@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FinDeependence Universe · CA Deep Dalal</title>
+<meta name="description" content="FinDeependence Universe by CA Deep Dalal: one 3D command center for IPO tracking, QIB allotment, max-profit planning, HNI family ledgers, IPO deal P&L and rights-issue analysis.">
+<meta name="theme-color" content="#06121F">
+<meta property="og:title" content="FinDeependence Universe · CA Deep Dalal">
+<meta property="og:description" content="Every IPO. Every rupee. One universe. Six institutional-grade desks in one app.">
+<meta property="og:image" content="assets/logo.png">
+<link rel="icon" href="assets/logo.png">
+<link rel="apple-touch-icon" href="assets/logo.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="assets/universe.css">
+<script>try{var t=localStorage.getItem('fdu-theme');if(t==='light')document.documentElement.dataset.theme='light'}catch(e){}</script>
+</head>
+<body class="locked">
+
+<div class="boot" id="boot" aria-hidden="true"><div class="in">
+  <div class="badge"><img src="assets/logo.png" alt=""></div>
+  <div class="t">ENTERING THE FINDEEPENDENCE UNIVERSE</div>
+  <div class="bar"><i></i></div>
+</div></div>
+
+<canvas id="cosmos" aria-hidden="true"></canvas>
+<div class="labels" id="labels"></div>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#/" aria-label="FinDeependence Universe home">
+      <span class="badge"><img src="assets/logo.png" alt="FinDeependence logo"></span>
+      <span><span class="t1">FinDeependence</span><span class="t2">Universe</span></span>
+    </a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#/" data-nav="home">Command Center</a>
+      <a href="#desks" data-nav="desks">Desks</a>
+      <a href="#radar" data-nav="radar">IPO Radar</a>
+      <a href="#calendar" data-nav="calendar">Calendar</a>
+      <a href="#rights" data-nav="rights">Rights</a>
+      <a href="#lab" data-nav="lab">Research Lab</a>
+    </nav>
+    <span class="sp"></span>
+    <button class="kbtn" id="openPal" aria-label="Search everything"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="t">Search IPOs, desks, actions…</span><kbd>Ctrl K</kbd></button>
+    <button class="ibtn" id="themeBtn" aria-label="Switch light or dark theme" title="Light / dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+    <button class="btn primary tourbtn" id="tourBtn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg><span>Tour</span></button>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <div class="wrap">
+    <div class="hero-copy">
+      <span class="kicker"><span class="dot"></span><span class="lbl" style="color:#C9D6E2" id="liveLine">Live · 6 desks · 1 universe</span></span>
+      <h1>Every IPO. Every rupee.<br><span class="grad">One universe.</span></h1>
+      <p class="sub">Track live IPOs, plan QIB bids to the share, compare profit on the same money, run family sHNI / bHNI ledgers, settle IPO deals, and rate rights issues. <b>Six desks, one place, no login.</b></p>
+      <div class="cta">
+        <a class="btn primary" href="#desks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>Start here</a>
+        <button class="btn ghost" id="heroTour"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>60-second tour</button>
+      </div>
+      <div class="kpis" id="kpis" aria-live="polite"></div>
+    </div>
+  </div>
+  <a class="scrollcue" href="#desks" aria-label="Scroll to the desks"><span></span><small class="lbl" style="font-size:9px">Scroll</small></a>
+  <div class="ticker" id="ticker" aria-label="Live IPOs"><div class="track" id="tickerTrack"></div></div>
+</section>
+
+<main class="sheet" id="sheet">
+  <div class="wrap">
+
+    <section class="sec" id="desks">
+      <div class="sec-h rv"><div><span class="lbl">Start here</span><h2>What do you want to do today?</h2><p>Pick a desk. Each one opens right here, keeps its place when you switch, and saves your work in this browser.</p></div></div>
+      <div class="desks" id="deskGrid"></div>
+      <div class="quick rv" id="quick"></div>
+    </section>
+
+    <section class="sec" id="radar">
+      <div class="sec-h rv"><div><span class="lbl">IPO Radar · Mainboard &amp; SME · NSE / BSE</span><h2>Every live IPO on one screen</h2><p>GMP, subscription by category and your chance of allotment, merged from all desks' live feeds. Tap any IPO for its 360° view.</p></div><span class="sp"></span><span class="lbl" id="radarStamp"></span></div>
+      <div class="toolbar">
+        <div class="seg" id="stSeg" role="tablist" aria-label="Status"></div>
+        <div class="seg" id="bdSeg" aria-label="Board">
+          <button data-b="all" class="on">All</button><button data-b="Mainboard">Mainboard</button><button data-b="SME">SME</button>
+        </div>
+        <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="radarQ" type="search" placeholder="Search an IPO" aria-label="Search an IPO"></label>
+      </div>
+      <div class="panel tbl-wrap"><table class="radar" id="radarTbl"><thead><tr>
+        <th data-sort="name">IPO</th><th class="r" data-sort="price">Price band</th><th class="r" data-sort="lotAmt">1 lot</th><th class="r" data-sort="sizeCr">Size</th>
+        <th class="r" data-sort="gmpPct">GMP · est. gain</th><th data-sort="subTotal">Subscription ×</th><th class="r" data-sort="odds">Retail odds</th><th data-sort="key">When</th><th></th>
+      </tr></thead><tbody></tbody></table></div>
+      <div class="cards-m" id="radarCards"></div>
+      <p class="note">GMP is grey-market chatter, not an official price. Estimated gain = GMP ÷ upper price band. Retail odds = 1 ÷ retail applications × (lottery for one minimum lot), shown only where application-wise data exists.</p>
+    </section>
+
+    <section class="sec" id="calendar">
+      <div class="sec-h rv"><div><span class="lbl">Today on Dalal Street</span><h2>The next 7 days</h2><p>Openings, closings, allotments and listings for IPOs, plus rights-issue closings, day by day.</p></div></div>
+      <div class="days" id="days"></div>
+    </section>
+
+    <section class="sec" id="rights">
+      <div class="sec-h rv"><div><span class="lbl">Rights Radar</span><h2>Rights issues worth a look</h2><p>Open and upcoming rights issues with the discount to the market price. The Rights Analyser gives each one a 0–100 rating, credit check and a plain action.</p></div><span class="sp"></span><button class="btn sm" data-open="rights">Open Rights Analyser →</button></div>
+      <div class="rgrid" id="rgrid"></div>
+    </section>
+
+    <section class="sec" id="lab">
+      <div class="sec-h rv"><div><span class="lbl">Research Lab · equity-research view</span><h2 id="labTitle">Does demand predict the listing pop?</h2><p>Every past IPO in the Deal Desk history: final total subscription against listing-day gain. Hover a dot for the IPO.</p></div><span class="sp"></span>
+        <div class="seg" id="labSeg"><button data-s="all" class="on">All</button><button data-s="Mainboard">Mainboard</button><button data-s="SME">SME</button></div>
+        <div class="seg" id="labPer"><button data-p="12" class="on">12 months</button><button data-p="0">All years</button></div>
+      </div>
+      <div class="lab">
+        <div class="panel pad chart-box" id="scatter"><div class="empty">Loading 600+ past IPOs…</div></div>
+        <div class="panel pad">
+          <div class="stats" id="labStats"></div>
+          <table class="bk" id="labBuckets"></table>
+          <p class="note" id="labNote"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" id="mine">
+      <div class="sec-h rv"><div><span class="lbl">Your universe</span><h2>Your work, across every desk</h2><p>Counted from what the desks saved in this browser. Nothing here leaves your device.</p></div></div>
+      <div class="mine">
+        <div class="panel pad"><div class="mgrid" id="mgrid"></div>
+          <div class="privacy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            <div><b>Private by design.</b> Accounts, PANs, applications, deals and your book stay in this browser. Each desk has its own backup and restore. Use them before you change device.</div></div>
+        </div>
+        <div class="panel pad"><span class="lbl">Data feeds</span><ul class="health" id="health"></ul>
+          <p class="note">Feeds refresh on their own through GitHub Actions: NSE, ipopremium.in, investorgain.com, Chittorgarh, Yahoo Finance, Screener.in and credit-rating agencies.</p></div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="foot">
+    <div class="wrap">
+      <div>
+        <div class="fb"><span class="badge"><img src="assets/logo.png" alt=""></span><div><b>FinDeependence</b><span class="lbl">Freedom with Finance</span></div></div>
+        <p>Created by <b style="color:var(--ink)">CA Deep Dalal</b> · Chartered Accountant · Fund Manager</p>
+        <div class="links">
+          <a class="btn sm" href="https://instagram.com/findeependence" target="_blank" rel="noopener">Instagram ↗</a>
+          <button class="btn sm" id="footTour">Watch the tour</button>
+        </div>
+      </div>
+      <div>
+        <span class="lbl">Disclaimer</span>
+        <p>For education and estimation only. Not investment advice or a recommendation. GMP is unofficial. Allotment is decided by the registrar under SEBI rules. Consult a SEBI-registered adviser before investing. Live figures come from public exchange and market-data pages.</p>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<!-- module host -->
+<div class="deck" id="deck" aria-hidden="true">
+  <nav class="dock" id="dock" aria-label="Desks"></nav>
+  <div class="stage">
+    <div class="stage-bar" id="stageBar"></div>
+    <div class="frames" id="frames"></div>
+  </div>
+</div>
+
+<!-- IPO 360 -->
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-hidden="true" aria-label="IPO 360° view"></aside>
+
+<!-- command palette -->
+<div class="pal" id="pal" hidden role="dialog" aria-modal="true" aria-label="Search">
+  <div class="pal-box">
+    <div class="pal-in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="palQ" placeholder="Type an IPO, a desk or an action…" autocomplete="off" aria-label="Search"><kbd>Esc</kbd></div>
+    <div class="pal-list" id="palList" role="listbox"></div>
+    <div class="pal-foot"><span><kbd>↑</kbd> <kbd>↓</kbd> move</span><span><kbd>Enter</kbd> open</span><span><kbd>Esc</kbd> close</span></div>
+  </div>
+</div>
+
+<!-- pitch tour -->
+<div class="tour" id="tour" aria-live="polite">
+  <div class="prog"><i id="tourProg"></i></div>
+  <div class="card" id="tourCard"></div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+<div class="cosmos-fallback" id="fallback" hidden></div>
+
+<script type="module" src="assets/universe.js"></script>
+</body>
+</html>

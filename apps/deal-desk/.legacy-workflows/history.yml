@@ -1,0 +1,46 @@
+name: Update past IPO history (subscription + GMP)
+
+on:
+  schedule:
+    - cron: '37 13 * * *'   # daily 19:07 IST, after the day's subscription closes
+    - cron: '23 1,7,19 * * *' # extra tries: IPO Premium sometimes shows a bot check, then the step waits for the next run
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['scripts/history.js', 'scripts/history-ipp.js']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ipo-history
+  cancel-in-progress: false
+
+jobs:
+  history:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: investorgain — IPO list, GMP history (new IPOs only)
+        run: node scripts/history.js
+        timeout-minutes: 75
+      - name: IPO Premium — category subscription, applications, listing (new pages only)
+        if: always()
+        run: node scripts/history-ipp.js
+        timeout-minutes: 60
+        env:
+          BUDGET_MIN: 50
+      - name: Save history
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add site/history.json
+          git commit -m "Update past IPO history" || exit 0
+          git pull --rebase origin "${GITHUB_REF_NAME}" || true
+          git push

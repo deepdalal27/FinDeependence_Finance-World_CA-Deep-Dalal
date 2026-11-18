@@ -1,0 +1,11 @@
+{
+  "name": "FinDeependence Universe",
+  "short_name": "FinDeependence",
+  "description": "Six IPO, QIB, HNI, deal and rights-issue desks in one app. By CA Deep Dalal.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#06121F",
+  "theme_color": "#06121F",
+  "icons": [{ "src": "assets/logo.png", "sizes": "702x702", "type": "image/png", "purpose": "any" }]
+}

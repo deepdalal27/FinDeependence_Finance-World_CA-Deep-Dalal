@@ -1,0 +1,24 @@
+/* FinDeependence Universe · shared module skin. Colours from the FinDeependence Studio brand. */
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@500;700&display=swap');
+
+/* Classic modules (IPO Tracker, QIB Allotment Desk, Max-Profit Planner, Rights Analyser): brand palette */
+:root.fdu-skin-classic {
+  --green: #3C9A08; --green-dark: #2E7A06; --green-soft: #EAF4E2;
+  --teal: #2C8F93; --teal-soft: #E3F1F1;
+  --ink: #14273D; --muted: #5D6B7A; --bg: #F6F2E8; --card: #FFFFFF; --line: #E2DACA;
+  --blue: #1D5FA8;
+}
+:root.fdu-skin-classic body > header { background: #0E2740; }
+:root.fdu-skin-classic body > header .brand h1 span,
+:root.fdu-skin-classic body > header .creator .nm b { color: #7FD3D6; }
+:root.fdu-skin-classic h1, :root.fdu-skin-classic h2, :root.fdu-skin-classic h3 {
+  font-family: "Bricolage Grotesque", "Inter", system-ui, sans-serif; letter-spacing: -.01em;
+}
+:root.fdu-skin-classic ::selection { background: rgba(44,143,147,.25); }
+
+/* Inside the Universe: the shell carries the brand, so the module's own brand band steps aside (screen only). */
+@media screen {
+  :root.fdu-embed.fdu-skin-classic body > header { display: none; }
+  :root.fdu-embed header.bar .brand { display: none; }
+  :root.fdu-embed body { scrollbar-width: thin; }
+}

@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FinDeependence — QIB Allotment Desk</title>
+<meta name="description" content="QIB allotment and listing P&L under SEBI ICDR Schedule XIV: net-of-anchor QIB, 5% MF reserve, exact mode from the Basis of Allotment. By CA Deep Dalal.">
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../../_universe/embed.css">
+<script src="../../_universe/embed.js" data-skin="classic"></script>
+</head>
+<body>
+<header>
+  <div class="hwrap">
+    <img src="logo.png" alt="FinDeependence logo">
+    <div class="brand">
+      <h1>Fin<span>Deependence</span> QIB Allotment Desk</h1>
+      <p>Freedom with Finance</p>
+    </div>
+    <div class="creator">
+      <div class="by">Created by</div>
+      <div class="nm"><b>CA</b> Deep Dalal</div>
+    </div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="tabs" role="tablist" aria-label="IPO status">
+    <button class="tab active" data-st="open">Open<span class="cnt" id="c-open"></span></button>
+    <button class="tab" data-st="upcoming">Upcoming<span class="cnt" id="c-upcoming"></span></button>
+    <button class="tab" data-st="closed">Closed<span class="cnt" id="c-closed"></span></button>
+    <button class="tab" data-st="listed">Listed<span class="cnt" id="c-listed"></span></button>
+    <button class="tab" data-st="all">All</button>
+  </div>
+  <div class="seg" aria-label="Board">
+    <button data-board="all" class="active">All</button>
+    <button data-board="main">Mainboard</button>
+    <button data-board="sme">SME</button>
+  </div>
+  <select id="ipo" aria-label="Pick an IPO"><option value="">— Manual entry —</option></select>
+  <span id="stamp"></span>
+  <button class="btn btn-pdf" id="pdfBtn" title="Open the print dialog. Choose “Save as PDF”.">⬇ PDF report</button>
+</div>
+
+<main>
+  <section class="card ipo-card" id="ipoCard" hidden></section>
+
+  <div class="layout">
+    <!-- ============ Inputs ============ -->
+    <section class="sect calc" id="inputs">
+      <h3>Application <span class="rt" id="subSrc"></span></h3>
+      <div class="calcgrid">
+        <div><label for="price">Bid price ₹</label><input id="price" type="number" step="0.01" min="0" inputmode="decimal"></div>
+        <div><label for="lot">Lot size</label><input id="lot" type="number" step="1" min="1" inputmode="numeric"></div>
+        <div><label for="netQib">Net QIB shares <small>ex-anchor</small></label><input id="netQib" type="number" step="1" min="0" inputmode="numeric"></div>
+        <div><label for="times">QIB subscription ×</label><input id="times" type="number" step="0.01" min="0" inputmode="decimal"></div>
+      </div>
+
+      <label for="amount">Application amount ₹</label>
+      <input id="amount" type="number" step="1000" min="0" inputmode="numeric" placeholder="e.g. 37,54,65,000">
+      <div class="calcgrid">
+        <div><label for="lots">Lots</label><input id="lots" type="number" step="1" min="0" inputmode="numeric"></div>
+        <div><label for="shares">Shares</label><input id="shares" type="number" step="1" min="0" inputmode="numeric"></div>
+      </div>
+      <p class="small" id="bidHint"></p>
+
+      <div class="calcgrid">
+        <div><label for="gmp">Current GMP ₹</label><input id="gmp" type="number" step="0.5" inputmode="decimal"></div>
+        <div><label for="listing">Actual listing ₹</label><input id="listing" type="number" step="0.05" inputmode="decimal"></div>
+      </div>
+
+      <div class="exact">
+        <label for="validDemand">Final valid QIB demand (shares) <span class="pill p-exact">Exact mode</span></label>
+        <input id="validDemand" type="number" step="1" min="0" inputmode="numeric" placeholder="From the registrar's Basis of Allotment">
+        <p class="small">Live exchange figures include bids that are later rejected during reconciliation. Enter the QIB category's
+          final valid demand from the Basis of Allotment and the result is exact. Leave it blank to use the live figures and your calibration factor.</p>
+      </div>
+
+      <details>
+        <summary>Advanced</summary>
+        <div class="calcgrid">
+          <div><label for="mfPct">MF reserve %</label><input id="mfPct" type="number" step="0.5" value="5"></div>
+          <div><label for="segment">Segment rules</label>
+            <select id="segment"><option value="main">Mainboard</option><option value="sme">SME</option></select></div>
+          <div><label for="rounding">Rounding</label>
+            <select id="rounding"><option value="share">Down · whole shares</option><option value="lot">Down · whole lots</option>
+              <option value="nearest">Nearest share</option><option value="nearest-lot">Nearest lot</option></select></div>
+          <div><label for="mfDemand">MF demand (shares)</label><input id="mfDemand" type="number" step="1" min="0" inputmode="numeric"></div>
+          <div><label for="haircut">Calibration factor <small id="calibSrc"></small></label><input id="haircut" type="number" step="0.0001" min="0" max="1.5" value="1"></div>
+          <div><label for="charges">Sell charges %</label><input id="charges" type="number" step="0.01" min="0" value="0"></div>
+          <div class="chk"><label><input id="isMf" type="checkbox"> Bidding as a Mutual Fund</label></div>
+        </div>
+        <label for="rsSteps">₹ steps from current GMP</label><input id="rsSteps" value="-20,-10,-5,-2,2,5,10,20">
+        <label for="pctSteps">% steps from GMP listing price <small>optional</small></label><input id="pctSteps" value="" placeholder="e.g. -10,10">
+      </details>
+    </section>
+
+    <!-- ============ Results ============ -->
+    <div class="results">
+      <section class="sect">
+        <h3>Expected allotment <span class="rt"><span class="pill" id="modeBadge">Model</span></span></h3>
+        <div class="cres">
+          <div class="hero-num"><span id="kAllot">—</span><small>shares</small></div>
+          <div class="hero-sub" id="kLots"></div>
+          <div class="kgrid">
+            <div class="fact"><div class="k">Allotment ratio</div><div class="v" id="kRatio">—</div></div>
+            <div class="fact"><div class="k">Amount blocked</div><div class="v" id="kBlocked">—</div></div>
+            <div class="fact"><div class="k">Allotted value</div><div class="v" id="kValue">—</div></div>
+            <div class="fact"><div class="k">Refund</div><div class="v" id="kRefund">—</div></div>
+          </div>
+          <div class="ev" id="why"></div>
+        </div>
+        <ul id="warnings" class="warn"></ul>
+      </section>
+
+      <section class="sect" id="workingSect">
+        <h3>Method &amp; working <span class="rt" id="segBadge"></span></h3>
+        <p class="method" id="methodText"></p>
+        <div class="tablewrap"><table class="ft working" id="working"><thead><tr>
+          <th>#</th><th>Step</th><th>Formula</th><th>Value</th></tr></thead><tbody></tbody></table></div>
+        <ul class="checks" id="checks"></ul>
+      </section>
+
+      <section class="sect">
+        <h3>Profit / loss ladder · from current GMP <span class="rt" id="pnlNote"></span></h3>
+        <div class="tablewrap"><table class="ft" id="pnl"><thead><tr>
+          <th>Scenario</th><th>GMP ₹</th><th>Listing ₹</th><th>Net P&amp;L ₹</th><th>On allotted</th><th>On blocked</th>
+        </tr></thead><tbody></tbody></table></div>
+      </section>
+
+      <section class="sect">
+        <h3>If final QIB subscription changes</h3>
+        <div class="tablewrap"><table class="ft" id="sens"><thead><tr><th>QIB ×</th><th>Shares</th><th>Ratio</th><th>P&amp;L at GMP ₹</th></tr></thead><tbody></tbody></table></div>
+      </section>
+
+      <section class="sect" id="verifySect">
+        <h3>🔍 Verify against your past allotments <span class="rt" id="verifyStat"></span></h3>
+        <p class="small" style="margin:0 0 8px">For each saved application where you enter the <b>actual</b> shares received, this works backwards to the
+          <b>final valid QIB demand</b> the registrar must have used, and compares it with the live figure the estimate was based on.
+          If the gap is similar across IPOs, the calibration factor will learn it. If the method itself were wrong, the gaps would be large and erratic.</p>
+        <div class="tablewrap"><table class="ft" id="verify"><thead><tr>
+          <th>IPO</th><th>Bid shares</th><th>Live-model</th><th>Actual</th><th>Diff</th><th>Live QIB ×</th><th>Implied final ×</th><th>Gap</th>
+        </tr></thead><tbody></tbody></table></div>
+        <div class="ev" id="verifySummary"></div>
+      </section>
+
+      <section class="sect">
+        <h3>📒 My QIB book <span class="rt" id="bookStat"></span></h3>
+        <div class="actions">
+          <button class="btn btn-go" id="save">Save application</button>
+          <button class="btn btn-ghost" id="export">Export applications.json</button>
+          <label class="btn btn-ghost">Import<input id="import" type="file" accept="application/json" hidden></label>
+        </div>
+        <div class="tablewrap"><table class="ft" id="history"><thead><tr><th>IPO</th><th>Bid shares</th><th>Predicted</th><th>Actual</th><th>Actual ÷ predicted</th><th></th></tr></thead><tbody></tbody></table></div>
+        <p class="small">After allotment, enter the shares you actually got. The calibration factor (the median of actual ÷ predicted) is then applied
+          to future estimates that use live data. Saved applications stay in this browser only. Export the file and commit it as <code>data/applications.json</code>
+          to have the scheduled job add listing P&amp;L.</p>
+      </section>
+    </div>
+  </div>
+</main>
+
+<!-- Printable A4 report, filled in by buildReport(). Hidden on screen, shown only when printing. -->
+<div id="report" aria-hidden="true"></div>
+
+<footer>
+  <div class="fwrap">
+    <img src="logo.png" alt="">
+    <div class="disc">
+      <b>FinDeependence</b> · Freedom with Finance · Created by <b>CA Deep Dalal</b><br>
+      IPO data is taken from IPO Premium on a schedule and from your hand-entered overrides. Allotment follows SEBI ICDR Schedule XIV for QIBs: net-of-anchor
+      portion, 5% Mutual Fund reserve, proportionate allotment rounded down. Live-data figures are <b>indicative estimates</b>. Only the registrar's Basis of Allotment is final.
+      GMP is unofficial grey-market data.<br>
+      <b>Disclaimer:</b> Education only. Not investment advice or a recommendation. Consult a SEBI-registered adviser before investing.
+    </div>
+  </div>
+</footer>
+<script type="module" src="app.js"></script>
+</body>
+</html>

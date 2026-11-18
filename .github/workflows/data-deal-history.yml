@@ -1,0 +1,49 @@
+name: "Data · Deal Desk history"
+
+# Ported from IPO_Profit_Loss_FinDeependence/.github/workflows/history.yml.
+on:
+  schedule:
+    - cron: '37 13 * * *'      # daily 19:07 IST, after the day's subscription closes
+    - cron: '23 1,7,19 * * *'  # extra tries: IPO Premium sometimes shows a bot check
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['apps/deal-desk/scripts/history.js', 'apps/deal-desk/scripts/history-ipp.js']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-deal-history
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: apps/deal-desk
+
+jobs:
+  history:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/deal-desk/package-lock.json
+      - run: npm ci
+      - name: investorgain — IPO list, GMP history (new IPOs only)
+        run: node scripts/history.js
+        timeout-minutes: 75
+      - name: IPO Premium — category subscription, applications, listing (new pages only)
+        if: always()
+        run: node scripts/history-ipp.js
+        timeout-minutes: 60
+        env:
+          BUDGET_MIN: 50
+      - name: Save history
+        if: always()
+        run: |
+          ../../.github/scripts/commit-push.sh "data: Deal desk past IPO history" site/history.json

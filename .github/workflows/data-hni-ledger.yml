@@ -1,0 +1,38 @@
+name: "Data · HNI IPO Ledger"
+
+# Ported from Individual-IPO-Filled-Tracker-FinDeependence/.github/workflows/pages.yml.
+on:
+  schedule:
+    - cron: '7,37 * * * *'   # twice an hour
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-hni-ledger
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: apps/hni-ledger
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run tests
+        run: npm test
+      - name: Build allotment auto-fill script
+        run: npm run build:helper
+      - name: Fetch latest IPOs (NSE, ipopremium, investorgain)
+        run: npm run sync
+      - name: Save updated IPO list
+        run: |
+          ../../.github/scripts/commit-push.sh "data: HNI ledger IPO list" site/ipos.json site/status.json site/fd-allotment.user.js

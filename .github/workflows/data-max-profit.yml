@@ -1,0 +1,37 @@
+name: "Data · Allotment Planner GMP"
+
+# Ported from IPO-Max-Profit-FinDeependece-CA_Deep_Dalal/.github/workflows/gmp.yml.
+# exchange.json (NSE max QIB bid) is still pushed from your own PC: apps/max-profit/scripts/fetch_exchange.ps1
+on:
+  schedule:
+    - cron: "*/10 * * * *"   # every 10 minutes, round the clock
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["apps/max-profit/scripts/**"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-max-profit
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: apps/max-profit
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python scripts/fetch_gmp.py
+      - name: Commit if changed
+        run: |
+          ../../.github/scripts/commit-push.sh "data: GMP $(date -u +'%Y-%m-%d %H:%M') UTC" gmp.json

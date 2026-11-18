@@ -1,0 +1,26 @@
+{
+  "name": "individual-ipo-filled-tracker-findeependence",
+  "version": "1.0.0",
+  "description": "FinDeependence HNI IPO Ledger: sHNI/bHNI IPO applications across individual accounts, hosted on GitHub Pages with NSE IPO auto-sync",
+  "scripts": {
+    "start": "node scripts/serve.js",
+    "sync": "node scripts/sync-ipos.js",
+    "test": "node --test test/*.test.js",
+    "build:helper": "node scripts/build-helper.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deepdalal27/Individual-IPO-Filled-Tracker-FinDeependence.git"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/deepdalal27/Individual-IPO-Filled-Tracker-FinDeependence/issues"
+  },
+  "homepage": "https://github.com/deepdalal27/Individual-IPO-Filled-Tracker-FinDeependence#readme",
+  "dependencies": {},
+  "engines": {
+    "node": ">=20"
+  },
+  "private": true
+}
