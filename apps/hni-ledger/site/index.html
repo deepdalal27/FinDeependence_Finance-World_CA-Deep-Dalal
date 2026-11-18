@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>HNI IPO Ledger · FinDeependence</title>
+<link rel="icon" href="logo_circle.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../../_universe/embed.css">
+<script src="../../_universe/embed.js"></script>
+</head>
+<body>
+<header class="bar">
+  <div class="wrap">
+    <div class="brand"><img src="logo_circle.png" alt="FinDeependence logo"><div><div class="lbl">FinDeependence</div><h1>HNI IPO Ledger</h1><span>sHNI / bHNI applications · CA Deep Dalal</span></div></div>
+    <nav class="tabs" id="tabs">
+      <button data-v="apply" class="on">Apply</button>
+      <button data-v="allot">Allotment</button>
+      <button data-v="report">Reports</button>
+      <button data-v="ipos">IPOs</button>
+      <button data-v="accounts">Accounts</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="status" class="notice" hidden></div>
+  <div id="newIpos" class="notice ok row" hidden></div>
+  <div id="backupNote" class="notice row" hidden><span class="grow" id="backupText"></span><button class="primary" id="backupNow">Download backup</button></div>
+
+  <section class="view" id="v-apply">
+    <div class="apply">
+      <aside class="rail">
+        <div class="rail-head">
+          <h2>IPOs</h2>
+          <select id="ipoFilter" aria-label="Which IPOs to list">
+            <option value="active">Open &amp; upcoming</option>
+            <option value="all">All</option>
+          </select>
+        </div>
+        <div class="ipo-list" id="ipoList"><p class="muted">Loading IPOs…</p></div>
+        <p class="muted small" id="feedInfo"></p>
+      </aside>
+      <div class="panel" id="applyPanel"><p class="muted">Loading…</p></div>
+    </div>
+  </section>
+
+  <section class="view" id="v-allot" hidden>
+    <div class="apply">
+      <aside class="rail">
+        <div class="rail-head">
+          <h2>IPOs applied</h2>
+          <select id="allotFilter" aria-label="Show accounts">
+            <option value="">All results</option>
+            <option value="PENDING">Pending</option>
+            <option value="ALLOTTED">Allotted</option>
+            <option value="NOT">Not allotted</option>
+          </select>
+        </div>
+        <div class="ipo-list" id="allotList"><p class="muted">Loading…</p></div>
+      </aside>
+      <div class="panel" id="allotPanel"><p class="muted">Loading…</p></div>
+    </div>
+  </section>
+
+  <section class="view" id="v-report" hidden>
+    <div class="panel">
+      <div class="panel-head">
+        <div><h2>Reports</h2><p class="muted">Every IPO and every account, with sHNI, bHNI and None counts. Click an IPO or account name to see only that IPO or account.</p></div>
+        <div class="row">
+          <label class="dl">Download <select id="dlScope" aria-label="What to download"></select></label>
+          <button class="primary" id="dlXlsx">Excel</button>
+          <button class="primary" id="dlPdf">PDF</button>
+        </div>
+      </div>
+      <div class="filters">
+        <label class="wide">Search IPO <input type="search" id="rQ" placeholder="Name or symbol"></label>
+        <label>From <input type="date" id="rFrom"></label>
+        <label>To <input type="date" id="rTo"></label>
+        <label>IPO <select id="rIpo"><option value="">All IPOs</option></select></label>
+        <label>Account <select id="rAcc"><option value="">All accounts</option></select></label>
+        <label>Category <select id="rCat"><option value="">sHNI + bHNI + None</option><option value="SHNI">sHNI only</option><option value="BHNI">bHNI only</option><option value="NONE">None only</option></select></label>
+        <label>Type <select id="rType"><option value="">Mainboard + SME</option><option value="Mainboard">Mainboard</option><option value="SME">SME</option></select></label>
+        <label>Status <select id="rSt"><option value="">Any status</option><option>Open</option><option>Upcoming</option><option>Closed</option></select></label>
+        <label>Sort IPOs <select id="rSortIpo"></select></label>
+        <label>Sort accounts <select id="rSortAcc"></select></label>
+        <label class="check"><input type="checkbox" id="rEmpty"> Include IPOs not applied</label>
+        <div class="row">
+          <button data-range="month">This month</button>
+          <button data-range="last30">Last 30 days</button>
+          <button data-range="fy">This FY</button>
+          <button data-range="clear">Clear</button>
+        </div>
+      </div>
+      <nav class="tabs sub" id="rViews" aria-label="Report view">
+        <button data-rv="ipo" class="on">By IPO</button>
+        <button data-rv="acc">By account</button>
+        <button data-rv="matrix">Matrix</button>
+        <button data-rv="rows">All rows</button>
+      </nav>
+      <div id="reportOut"></div>
+    </div>
+  </section>
+
+  <section class="view" id="v-ipos" hidden>
+    <div class="panel">
+      <div class="panel-head">
+        <div><h2>IPOs</h2><p class="muted" id="ipoInfo">Mainboard IPOs from NSE with dates, price band and lot size. Add or correct any IPO here.</p></div>
+        <button id="addIpo">Add a missing IPO</button>
+      </div>
+      <form class="form" id="ipoForm" hidden>
+        <input type="hidden" id="fId">
+        <label>Company name <input id="fName" required></label>
+        <label>Symbol <input id="fSymbol"></label>
+        <label>Type <select id="fType"><option>Mainboard</option><option>SME</option></select></label>
+        <label>Open date <input type="date" id="fOpen"></label>
+        <label>Close date <input type="date" id="fClose"></label>
+        <label>Price band low (₹) <input type="number" step="0.01" min="0" id="fLow"></label>
+        <label>Price band upper (₹) <input type="number" step="0.01" min="0" id="fHigh" required></label>
+        <label>Lot size (shares) <input type="number" min="1" step="1" id="fLot" required></label>
+        <label>Registrar <input id="fReg" placeholder="e.g. KFin Technologies"></label>
+        <label class="full">Allotment link (optional) <input type="url" id="fAllot" placeholder="https://… registrar allotment page"></label>
+        <div class="row full"><button type="submit" class="primary">Save IPO</button><button type="button" id="ipoCancel">Cancel</button></div>
+      </form>
+      <div class="tbl"><table id="ipoTable"></table></div>
+    </div>
+  </section>
+
+  <section class="view" id="v-accounts" hidden>
+    <div class="panel">
+      <div class="panel-head">
+        <div><h2>Accounts</h2><p class="muted">Rename accounts and add PAN. Changes save when you leave a field. Inactive accounts are hidden on the Apply tab.</p></div>
+        <div class="row"><input id="newAcc" placeholder="Account holder name" aria-label="New account name"><button class="primary" id="addAcc">Add account</button></div>
+      </div>
+      <div class="tbl"><table id="accTable"></table></div>
+      <div class="backup">
+        <p class="muted">Your accounts, IPOs, application numbers and categories are saved in this browser. Back up regularly. The backup file and the Excel backup can both be restored here, on this or any other computer. The PDF backup is a printable record only.</p>
+        <button id="backupBtn">Backup file</button>
+        <button id="backupXlsx">Backup as Excel</button>
+        <button id="backupPdf">Backup as PDF</button>
+        <label class="btnlike"><input type="file" id="restoreFile" accept="application/json,.json,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden><span role="button" tabindex="0" id="restoreBtn" class="fakebtn">Restore backup</span></label>
+      </div>
+    </div>
+  </section>
+</main>
+<div id="toast" role="status" aria-live="polite"></div>
+<p class="byline">FinDeependence · CA Deep Dalal · Chartered Accountant · Fund Manager</p>
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="accounts.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

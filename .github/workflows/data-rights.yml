@@ -1,0 +1,57 @@
+name: "Data · Rights Issues"
+
+# Ported from Right-Issue-Analysis-by-FinDeependence-CA-Deep-Dalal/.github/workflows/update-data.yml.
+# The data (about 1 MB) is published to the rights-data branch as a single commit, like the old gh-pages branch,
+# so refreshing every 15 minutes never bloats main. The deploy job copies it into the site.
+on:
+  schedule:
+    - cron: "*/15 3-12 * * 1-5"   # market hours (09:00–17:30 IST, Mon–Fri): every 15 minutes
+    - cron: "7 */3 * * *"          # off-hours: every 3 hours
+  push:
+    branches: [main]
+    paths: ["apps/rights/scripts/**", ".github/workflows/data-rights.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-rights
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Fetch previously published data (keeps subscription history)
+        continue-on-error: true
+        uses: actions/checkout@v4
+        with:
+          ref: rights-data
+          path: prev
+      - name: Seed history from the copy in main on the first run
+        run: |
+          if [ ! -f prev/data/rights.json ]; then mkdir -p prev/data && cp apps/rights/data/rights.json prev/data/rights.json; fi
+      - name: Install pdftotext (reads rating rationale PDFs)
+        run: which pdftotext || (sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils)
+      - name: Build data
+        working-directory: apps/rights
+        env:
+          PREV: ../../prev/data/rights.json
+          OUT: ../../_out/data/rights.json
+        run: python3 scripts/scrape.py
+      - name: Publish data branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_out
+          publish_branch: rights-data
+          force_orphan: true
+          enable_jekyll: true
+          user_name: "github-actions[bot]"
+          user_email: "41898282+github-actions[bot]@users.noreply.github.com"
+          commit_message: "Rights data refresh"

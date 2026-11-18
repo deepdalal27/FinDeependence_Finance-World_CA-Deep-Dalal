@@ -1,0 +1,42 @@
+name: "Data · Deal Desk IPOs & GMP"
+
+# Ported from IPO_Profit_Loss_FinDeependence/.github/workflows/pages.yml.
+on:
+  schedule:
+    - cron: '11,41 3-16 * * *'   # every 30 min, 08:41–22:11 IST
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["apps/deal-desk/scripts/sync.js", "apps/deal-desk/src/**", "apps/deal-desk/site/js/parse.js", "apps/deal-desk/site/js/merge.js"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-deal-desk
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: apps/deal-desk
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/deal-desk/package-lock.json
+      - run: npm ci
+      - name: Run tests
+        run: npm test
+      - name: Fetch IPOs, GMP and subscription (NSE, IPO Premium, investorgain)
+        run: npm run sync
+      - name: Save updated IPO list
+        run: |
+          ../../.github/scripts/commit-push.sh "data: Deal desk IPO list and GMP" site/ipos.json
