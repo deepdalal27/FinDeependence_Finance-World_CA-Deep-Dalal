@@ -259,6 +259,7 @@ footer b{color:#fff}
 .pbar-v{width:110px;text-align:right;font-size:.75rem;color:var(--ink);white-space:nowrap}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+<script src="../_universe/access.js" data-guard></script>
 <link rel="stylesheet" href="../_universe/embed.css">
 <script src="../_universe/embed.js" data-skin="classic"></script>
 </head>
@@ -1228,8 +1229,8 @@ function bookHTML(){
 }
 
 /* ============ ACCESS ============ */
-/* FinDeependence Universe: open access — the licence gate of the standalone tracker is removed. */
-document.getElementById('lic-stamp').textContent='✓ Open access';
+/* FinDeependence Universe: access is checked once for all desks by apps/_universe/access.js (same FD- codes). */
+document.getElementById('lic-stamp').textContent='✓ FinDeependence member';
 
 /* ================= EVENTS ================= */
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');view.tab=b.dataset.tab;render();});

@@ -241,6 +241,7 @@ export function createCosmos(canvas, opts = {}) {
     offsetX = w > 1100 ? 12 : w > 800 ? 7 : 0;
     narrow = w < 800;
     camHome.set(0, narrow ? 4 : 7, narrow ? (h > w ? 66 : 50) : 38);
+    if (window.__fduCamZ) camHome.z = window.__fduCamZ; // capture override
   }
   resize();
   window.addEventListener('resize', resize);
@@ -268,8 +269,8 @@ export function createCosmos(canvas, opts = {}) {
     // intro fly-in, then gentle orbit + parallax
     const k = Math.min((t - intro.t0) / intro.dur, 1), e = ease(k);
     pointer.sx = lerp(pointer.sx, pointer.x, 0.04); pointer.sy = lerp(pointer.sy, pointer.y, 0.04);
-    world.position.x = lerp(world.position.x, focus ? 0 : offsetX, 0.05);
-    world.position.y = lerp(world.position.y, narrow && !focus ? 17 : 0, 0.05);
+    world.position.x = lerp(world.position.x, focus || window.__fduNoLift ? 0 : offsetX, 0.05);
+    world.position.y = lerp(world.position.y, narrow && !focus && !window.__fduNoLift ? 17 : 0, 0.05);
     let target = tmp.copy(camFrom).lerp(camHome, e);
     target.x += pointer.sx * 3.2 * motion; target.y += pointer.sy * 2.0 * motion + scrollK * 10; target.z += scrollK * 22;
     let look = tmp2.set(world.position.x * 0.35, scrollK * -4, 0);

@@ -3,6 +3,8 @@
  * and hosts every desk (unchanged) inside one app. Desk data stays in this browser. */
 
 /* =================== desks =================== */
+import { createMembers } from './members.js';
+
 const I = {
   radar: '<path d="M12 12 19 5"/><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/>',
   bank: '<path d="M3 10h18L12 4z"/><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/>',
@@ -22,6 +24,9 @@ const I = {
   sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
   moon: '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
   bolt: '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
+  lock: '<rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/>',
+  bell: '<path d="M18 15.5V11a6 6 0 0 0-12 0v4.5L4.5 18h15z"/><path d="M10 21a2 2 0 0 0 4 0"/>',
+  ig: '<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor"/>',
 };
 const svg = (k, sw = 2) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${I[k] || ''}</svg>`;
 
@@ -98,11 +103,19 @@ const FEEDS = {
   hist: { url: 'apps/deal-desk/site/history.json', label: 'Past IPO history (listing gains)', desk: 'deal-desk' },
 };
 const S = { ipos: [], rights: [], hist: [], meta: {}, tab: null, board: 'all', q: '', sort: { k: 'key', dir: 1 }, lab: { seg: 'all', per: 12 } };
+const M = createMembers({ S, $, $$, esc, svg, toast, dShort, inr, pct, todayIST, addDays, radarRows: () => radarRows(),
+  onUnlock: () => { loadAll().then(() => { refreshAll(); M.runAlerts(); }); }, onLock: () => closeDesk() });
 
 async function getJSON(url) {
-  const r = await fetch(url + (url.includes('?') ? '&' : '?') + 't=' + Math.floor(Date.now() / 6e4), { cache: 'no-store' });
-  if (!r.ok) throw new Error(r.status);
-  return r.json();
+  let err;
+  for (const u of M.feedUrls(url)) { // members: repository first (fresher), then this site
+    try {
+      const r = await fetch(u + (u.includes('?') ? '&' : '?') + 't=' + Math.floor(Date.now() / 6e4), { cache: 'no-store' });
+      if (!r.ok) throw new Error(r.status);
+      return await r.json();
+    } catch (e) { err = e; }
+  }
+  throw err;
 }
 
 function statusOf(o, today) {
@@ -135,7 +148,7 @@ function mergeIpos(feeds) {
       name: i.name.replace(/\s*\(.*?\)\s*/g, ' ').trim(), board: i.is_sme ? 'SME' : 'Mainboard', exchange: i.exchange, priceLow: num(i.price_band_low), priceHigh: num(i.price_band_high), lot: num(i.lot_size),
       open: i.open_date, close: i.close_date, allot: i.allotment_date, listing: i.listing_date, gmp: num(i.gmp),
       gmpHist: (i.gmp_history || []).map((g) => ({ t: g.at, v: num(g.gmp) })).filter((g) => g.v != null), sub, subTotal: sub && sub.total ? sub.total.times : null,
-      subAt: sub ? (i.last_seen || feeds.qib.updated) : null, netQib: num(eff.net_qib_shares ?? i.qib_shares_offered), anchor: num(i.anchor_shares), mfDemand: num(eff.mf_demand_shares), listingPrice: num(eff.listing_price ?? i.listing_price), url: i.url,
+      subAt: sub ? (((i.subscription_history || []).slice(-1)[0] || {}).at || feeds.qib.updated) : null, netQib: num(eff.net_qib_shares ?? i.qib_shares_offered), anchor: num(i.anchor_shares), mfDemand: num(eff.mf_demand_shares), listingPrice: num(eff.listing_price ?? i.listing_price), url: i.url,
     }, 'QIB Desk');
   });
 
@@ -284,7 +297,7 @@ function renderRadar() {
     <td>${subBars(o)}</td>
     <td class="r">${oddsTxt(o)}</td>
     <td class="when"><b>${w1}</b><small>${w2}</small></td>
-    <td><button class="go-btn" data-ipo="${esc(o.key)}">360° →</button></td></tr>`; }).join('') : `<tr><td colspan="9" class="empty">No IPOs here right now. Try another tab.</td></tr>`;
+    <td><span style="display:inline-flex;gap:6px;align-items:center">${M.star(o.key)}<button class="go-btn" data-ipo="${esc(o.key)}">360° →</button></span></td></tr>`; }).join('') : `<tr><td colspan="9" class="empty">No IPOs here right now. Try another tab.</td></tr>`;
   $('#radarCards').innerHTML = rows.length ? rows.map((o) => { const [w1, w2] = whenTxt(o); return `<button class="mcard" data-ipo="${esc(o.key)}"><div class="r1"><div class="nm"><b>${esc(o.name)}</b><small><span class="pill ${o.board === 'SME' ? 'sme' : 'main'}">${o.board}</span> <span class="pill ${o.status}">${o.status === 'closed' ? 'awaiting listing' : o.status}</span></small></div>${sparkline(o.gmpHist)}</div>
     <div class="r2"><div><span>GMP</span><b class="${o.gmp > 0 ? 'pos' : ''}">${o.gmp == null ? '—' : inr(o.gmp)}</b></div><div><span>Est. gain</span><b class="${o.gmpPct > 0 ? 'pos' : o.gmpPct < 0 ? 'neg' : ''}">${pct(o.gmpPct)}</b></div><div><span>Subscribed</span><b>${x(o.subTotal)}</b></div></div>
     <div class="when"><b>${w1}</b> <small>${w2}</small></div></button>`; }).join('') : '<div class="empty">No IPOs here right now.</div>';
@@ -377,6 +390,7 @@ function renderMine() {
 /* =================== IPO 360 drawer =================== */
 function openIpo(key, push = true) {
   const o = S.ipos.find((i) => i.key === key); if (!o) return;
+  if (!M.allowed()) { M.showUnlock(); return; }
   const t = todayIST();
   const stages = [['Open', o.open], ['Close', o.close], ['Allotment', o.allot], ['Listing', o.listing]];
   const idx = stages.reduce((a, [, d], i) => (d && t >= d ? i : a), -1);
@@ -384,7 +398,7 @@ function openIpo(key, push = true) {
   const cats = [['QIB', s.qib, 'var(--gold)'], ['bHNI', s.bnii, 'var(--pen)'], ['sHNI', s.snii, 'var(--teal)'], ['NII', !s.bnii && s.nii, 'var(--pen)'], ['Retail', s.retail, 'var(--amber)'], ['Employee', s.employee, 'var(--violet)'], ['Total', s.total, 'var(--green)']].filter(([, v]) => v && num(v.times) != null);
   const ring = (v, lbl, c, approx) => `<div style="--c:${c}"><div class="ring" style="--p:${v == null ? 0 : Math.max(2, Math.min(100, v * 100))}"><b>${v == null ? '—' : v >= 1 ? '100%' : (v * 100).toFixed(v < 0.1 ? 2 : 1) + '%'}</b></div><b style="font-size:13px">${lbl}</b><small>${v == null ? 'no data yet' : approx ? '≈ from share demand' : 'per application'}</small></div>`;
   const acts = [['ipo-tracker', 'Full analysis & odds', 'IPO Tracker'], ['qib-desk', 'Exact QIB allotment', 'QIB Desk'], ['max-profit', 'Profit at every subscription', 'Max-Profit'], ['hni-ledger', 'Record family applications', 'HNI Ledger'], ['deal-desk', 'Record a deal', 'Deal Desk'], ['ipo-tracker', 'Plan capital across IPOs', 'IPO Tracker · Plan']];
-  $('#drawer').innerHTML = `<div class="dhead"><div><span class="pill ${o.board === 'SME' ? 'sme' : 'main'}">${o.board}</span> <span class="pill ${o.status}">${o.status === 'closed' ? 'awaiting listing' : o.status}</span> <span class="lbl" style="margin-left:4px">${esc(o.exchange || '')}</span><h3>${esc(o.name)}</h3><span class="muted" style="font-size:13px">IPO 360° · merged from ${o.src.map(esc).join(' + ')}</span></div><button class="ibtn x" id="dClose" aria-label="Close" style="color:var(--ink);border-color:var(--line-2)">${svg('x')}</button></div>
+  $('#drawer').innerHTML = `<div class="dhead"><div><span class="pill ${o.board === 'SME' ? 'sme' : 'main'}">${o.board}</span> <span class="pill ${o.status}">${o.status === 'closed' ? 'awaiting listing' : o.status}</span> <span class="lbl" style="margin-left:4px">${esc(o.exchange || '')}</span><h3>${esc(o.name)}</h3><span class="muted" style="font-size:13px">IPO 360° · merged from ${o.src.map(esc).join(' + ')}</span></div>${M.star(o.key, true)}<button class="ibtn x" id="dClose" aria-label="Close" style="color:var(--ink);border-color:var(--line-2)">${svg('x')}</button></div>
   <div class="dbody">
     <div class="big3">
       <div><div class="lbl">GMP</div><div class="v ${o.gmp > 0 ? 'pos' : o.gmp < 0 ? 'neg' : ''}">${o.gmp == null ? '—' : inr(o.gmp)}</div><small class="muted">${o.gmpPct == null ? 'not quoted' : pct(o.gmpPct) + ' on upper band'}</small></div>
@@ -430,6 +444,7 @@ function renderDock() {
 }
 function openDesk(id, push = true) {
   const d = DESK[id]; if (!d) return;
+  if (!M.allowed()) { M.showUnlock(); return; }
   closeIpo(false); closePal();
   current = id;
   let f = $(`#frames iframe[data-id="${id}"]`);
@@ -475,7 +490,7 @@ function palData(q) {
   const rights = S.rights.filter((r) => r.status !== 'closed' && q && m(r.name + ' rights')).slice(0, 5).map((r) => ({ g: 'Rights issues', c: '#FF9F7A', i: 'rights', b: r.name, s: `${r.status} · ${r.ratio || ''} · closes ${dShort(r.close)}`, r: r.disc != null ? `${r.disc.toFixed(1)}% off` : '', run: () => openDesk('rights') }));
   const acts = [
     ['Take the 60-second tour', 'play', () => startTour()], ['Go to IPO Radar', 'radar', () => goSec('radar')], ['This week on Dalal Street', 'cal', () => goSec('calendar')],
-    ['Research Lab: demand vs listing gain', 'lab', () => goSec('lab')], ['Switch light / dark theme', 'sun', () => toggleTheme()], ['Command Center (home)', 'home', () => { closeDesk(); goSec('top'); }],
+    ['Research Lab: demand vs listing gain', 'lab', () => goSec('lab')], ['Switch light / dark theme', 'sun', () => toggleTheme()], ['Alerts & watchlist (members)', 'bell', () => M.openAlerts()], ['Download IPO Radar as CSV (members)', 'ext', () => M.exportRadar()], ['Command Center (home)', 'home', () => { closeDesk(); goSec('top'); }],
   ].filter(([b]) => m(b)).map(([b, i, run]) => ({ g: 'Actions', c: '#7FD3D6', i, b, s: '', run }));
   return [...ipos, ...desks, ...rights, ...acts];
 }
@@ -549,6 +564,7 @@ function route() {
   const h = location.hash;
   if (h.startsWith('#/desk/')) { endTour(false); openDesk(h.slice(7), false); return; }
   if (h.startsWith('#/ipo/')) { endTour(false); closeDesk(false); openIpo(decodeURIComponent(h.slice(6)), false); return; }
+  if (h === '#/unlock') { endTour(false); closeDesk(false); M.showUnlock(); return; }
   if (h === '#/tour') { startTour(); return; }
   if (h === '#/' || h === '' || h === '#') { endTour(false); closeDesk(false); closeIpo(false); return; }
   closeDesk(false); closeIpo(false); endTour(false);
@@ -623,6 +639,7 @@ async function startCosmos() {
     $('#labels').innerHTML = DESKS.map((d) => `<div class="plabel" data-l="${d.id}" style="--c:${d.color}"><button data-open="${d.id}" aria-label="Open ${esc(d.name)}"><i></i>${esc(d.name)}</button></div>`).join('');
     DESKS.forEach((d) => { labels[d.id] = $(`.plabel[data-l="${d.id}"]`); });
     cosmos = createCosmos(canvas, { modules: DESKS.map((d) => ({ id: d.id, color: d.color })), labels, logo: 'assets/logo.png', onPick: (id) => openDesk(id) });
+    window.__fduCosmos = cosmos; // handle for video capture / debugging
   } catch (e) { canvas.hidden = true; $('#fallback').hidden = false; }
 }
 function cosmosBars() {
@@ -633,18 +650,20 @@ function cosmosBars() {
 }
 
 /* =================== boot =================== */
+function refreshAll() { renderKpis(); renderTicker(); renderRadar(); renderDays(); renderRights(); renderMine(); renderLab(); }
 async function boot() {
   $('#themeBtn').innerHTML = svg(document.documentElement.dataset.theme === 'light' ? 'sun' : 'moon');
-  renderDesks(); renderDock(); observeReveal();
+  renderDesks(); renderDock(); M.init(); observeReveal();
   const cos = startCosmos();
   const minShow = new Promise((r) => setTimeout(r, reduceMotion ? 50 : 900));
   await Promise.allSettled([loadAll(), cos, minShow]);
-  renderKpis(); renderTicker(); renderRadar(); renderDays(); renderRights(); renderMine(); renderLab(); observeReveal();
+  refreshAll(); observeReveal(); M.runAlerts();
   cosmosBars();
   $('#boot').classList.add('done'); document.body.classList.remove('locked');
   if (cosmos) cosmos.replayIntro();
   route();
   loadHistory().then(() => { renderLab(); renderMine(); cosmosBars(); });
-  setInterval(async () => { await loadAll(); renderKpis(); renderTicker(); renderRadar(); renderDays(); renderRights(); renderMine(); }, 5 * 60 * 1000);
+  const tick = async () => { try { await loadAll(); refreshAll(); M.runAlerts(); } finally { setTimeout(tick, M.refreshMs()); } };
+  setTimeout(tick, M.refreshMs());
 }
 boot();
