@@ -16,6 +16,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
 <link rel="stylesheet" href="assets/universe.css">
+<script src="apps/_universe/access.js"></script>
 <script>try{var t=localStorage.getItem('fdu-theme');if(t==='light')document.documentElement.dataset.theme='light'}catch(e){}</script>
 </head>
 <body class="locked">
@@ -45,6 +46,7 @@
     </nav>
     <span class="sp"></span>
     <button class="kbtn" id="openPal" aria-label="Search everything"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="t">Search IPOs, desks, actions…</span><kbd>Ctrl K</kbd></button>
+    <span id="memberBox" class="member-box"></span>
     <button class="ibtn" id="themeBtn" aria-label="Switch light or dark theme" title="Light / dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
     <button class="btn primary tourbtn" id="tourBtn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg><span>Tour</span></button>
   </div>
@@ -84,6 +86,7 @@
           <button data-b="all" class="on">All</button><button data-b="Mainboard">Mainboard</button><button data-b="SME">SME</button>
         </div>
         <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="radarQ" type="search" placeholder="Search an IPO" aria-label="Search an IPO"></label>
+        <button class="btn sm" data-export="radar" title="Download this view as CSV (members)">⬇ CSV</button>
       </div>
       <div class="panel tbl-wrap"><table class="radar" id="radarTbl"><thead><tr>
         <th data-sort="name">IPO</th><th class="r" data-sort="price">Price band</th><th class="r" data-sort="lotAmt">1 lot</th><th class="r" data-sort="sizeCr">Size</th>
@@ -107,6 +110,7 @@
       <div class="sec-h rv"><div><span class="lbl">Research Lab · equity-research view</span><h2 id="labTitle">Does demand predict the listing pop?</h2><p>Every past IPO in the Deal Desk history: final total subscription against listing-day gain. Hover a dot for the IPO.</p></div><span class="sp"></span>
         <div class="seg" id="labSeg"><button data-s="all" class="on">All</button><button data-s="Mainboard">Mainboard</button><button data-s="SME">SME</button></div>
         <div class="seg" id="labPer"><button data-p="12" class="on">12 months</button><button data-p="0">All years</button></div>
+        <button class="btn sm" data-export="history" title="Download the full IPO history as CSV (members)">⬇ CSV</button>
       </div>
       <div class="lab">
         <div class="panel pad chart-box" id="scatter"><div class="empty">Loading 600+ past IPOs…</div></div>

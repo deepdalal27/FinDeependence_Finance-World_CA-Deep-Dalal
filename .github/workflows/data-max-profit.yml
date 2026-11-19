@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ["apps/max-profit/scripts/**"]
+    paths: ["apps/max-profit/scripts/**", "apps/qib-desk/docs/data/ipos.json"]
 
 permissions:
   contents: write
@@ -31,7 +31,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: python scripts/fetch_gmp.py
+      - name: Fetch GMP (ipopremium list), else rebuild from the QIB desk feed
+        run: python scripts/fetch_gmp.py || python scripts/gmp_from_qib.py
       - name: Commit if changed
         run: |
           ../../.github/scripts/commit-push.sh "data: GMP $(date -u +'%Y-%m-%d %H:%M') UTC" gmp.json

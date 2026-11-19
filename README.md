@@ -33,9 +33,24 @@ The old apps and the Universe are on the same site (`deepdalal27.github.io`), so
 
 On a new device, use each desk's **Restore backup**.
 
-## Access
+## Access (members)
 
-Everything is open. The IPO Tracker's licence gate (FD- codes) was removed in this copy. The standalone tracker on its old address is untouched.
+The Universe uses **the same FD- access codes as the original IPO Tracker** (`FD-YYMMDDxx-HASH`). They are verified by the same `fd-license` Cloudflare worker (one code = one device) and use the same storage keys (`fd_lic`, `fd_lic_ok`, `fd_dev`). So a browser that already unlocked the tracker is already a member here. One code now unlocks everything.
+
+- **Preview (no code):** the 3D universe, live KPIs and ticker, the desk cards and the 60-second tour. This is the demo you can show anyone.
+- **Members:** IPO Radar, IPO 360°, the calendar, Rights Radar, Research Lab, all desks, and these members-only features:
+  - **Alerts centre** (bell icon): new IPO, opens today, last day, allotment day, listing day, GMP moves of 3+ points, subscription crossing 1×/10×/50×/100×, rights issue closing tomorrow. Optional browser notifications. Checks every 2 minutes while the Universe is open.
+  - **Watchlist** (★ on any IPO) and **phone-calendar reminders**: a `.ics` file with open, close, allotment and listing events and a 30-minute reminder, which works even when the app is closed.
+  - **Priority data**: members read the feeds straight from the repository, which is fresher than the published site, and refresh every 2 minutes instead of 5.
+  - **CSV exports** of the IPO Radar view and the full IPO history.
+- Desk pages opened directly (`apps/<desk>/…`) send visitors without a code to `#/unlock`.
+- Issue codes exactly as before. Set `ON = false` in `apps/_universe/access.js` to open everything again.
+
+**Be aware:** like the original tracker's, this is a client-side gate. It stops normal visitors, but the repository is public, so a technical person can read the code and the data files. For real protection later:
+1. Make the repository private and serve it through Cloudflare Pages behind Cloudflare Access, or have the worker hand out the data.
+2. Remove `SECRET` from the client and let the worker alone validate codes.
+
+The six old standalone sites stay open and free at their old addresses until you retire them.
 
 ## Data pipelines
 
@@ -47,7 +62,7 @@ All scrapers now live in this repository and run on GitHub Actions. They have th
 | `Data · HNI IPO Ledger` | every 30 min | `apps/hni-ledger/site/ipos.json`, `status.json`, `fd-allotment.user.js` |
 | `Data · Deal Desk IPOs & GMP` | every 30 min, 08:41–22:11 IST | `apps/deal-desk/site/ipos.json` |
 | `Data · Deal Desk history` | daily 19:07 IST, plus retries | `apps/deal-desk/site/history.json` |
-| `Data · Allotment Planner GMP` | every 10 min | `apps/max-profit/gmp.json` |
+| `Data · Allotment Planner GMP` | every 10 min | `apps/max-profit/gmp.json` (if ipopremium's list endpoint fails, `gmp_from_qib.py` rebuilds it from the QIB desk feed) |
 | `Data · Rights Issues` | every 15 min in market hours, every 3 h otherwise | `rights-data` branch (single commit, so main never bloats) |
 | `Deploy FinDeependence Universe` | on every push to main and after every data job | GitHub Pages |
 
