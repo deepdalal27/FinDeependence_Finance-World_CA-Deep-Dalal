@@ -173,16 +173,18 @@ export function createCosmos(canvas, opts = {}) {
   ringLine.rotation.x = -Math.PI / 2; ringLine.position.y = -0.21; barRing.add(ringLine); disposables.push(ringLine.geometry, ringLine.material);
 
   /* ---------- rising teal growth line (the logo's chart line) ---------- */
+  const growth = { tube: null, dots: [], idx: 0 };
   {
     const pts = []; for (let i = 0; i <= 14; i++) { const t = i / 14, a = t * TAU * 1.25 + 0.6, r = 9 + t * 16; pts.push(new THREE.Vector3(Math.cos(a) * r, -7 + t * 15 + Math.sin(t * 9) * 0.8, Math.sin(a) * r)); }
     const curve = new THREE.CatmullRomCurve3(pts);
     const geo = new THREE.TubeGeometry(curve, 400, 0.07, 8, false);
     const mat = new THREE.ShaderMaterial({ uniforms, vertexShader: lineVert, fragmentShader: lineFrag, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
     const tube = new THREE.Mesh(geo, mat); world.add(tube); disposables.push(geo, mat);
+    growth.tube = tube; growth.idx = geo.index ? geo.index.count : 0;
     const dotT = radialTexture([[0, 'rgba(190,250,245,1)'], [0.3, 'rgba(127,211,214,.6)'], [1, 'rgba(0,0,0,0)']], 64);
     for (let i = 1; i < pts.length; i += 2) {
       const d = new THREE.Sprite(new THREE.SpriteMaterial({ map: dotT, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
-      d.position.copy(pts[i]); d.scale.set(1.3, 1.3, 1); world.add(d); disposables.push(d.material);
+      d.position.copy(pts[i]); d.scale.set(1.3, 1.3, 1); d.userData.t = i / 14; world.add(d); disposables.push(d.material); growth.dots.push(d);
     }
     disposables.push(dotT);
   }
@@ -280,23 +282,35 @@ export function createCosmos(canvas, opts = {}) {
     }
     camPos.lerp(target, focus ? 0.045 : (k < 1 ? 1 : 0.06)); camLook.lerp(look, 0.06);
     camera.position.copy(camPos); camera.lookAt(camLook);
+    // capture-only hooks (marketing films): a scripted camera and build-up controls. Unused on the live site.
+    const cine = window.__fduCam, V = window.__fduVis;
+    if (cine) { camera.position.set(cine.pos[0], cine.pos[1], cine.pos[2]); camera.lookAt(cine.look[0], cine.look[1], cine.look[2]); if (cine.fov && camera.fov !== cine.fov) { camera.fov = cine.fov; camera.updateProjectionMatrix(); } }
 
     world.userData.stars.rotation.y += world.userData.stars.userData.spin * dt * motion;
     nebulae.forEach((n, i) => { n.material.rotation += dt * 0.01 * (i % 2 ? 1 : -1) * motion; });
     core.rotation.y += dt * 0.15 * motion; ico.rotation.y -= dt * 0.08 * motion; ico.rotation.x += dt * 0.03 * motion;
     barRing.rotation.y += dt * 0.05 * motion;
     bars.forEach((b) => { const u = b.mesh.userData, g = Math.min(Math.max((t - barsBorn - u.delay) / 1.4, 0), 1); b.mesh.scale.y = Math.max(0.001, u.h * ease(g) * (1 + 0.04 * Math.sin(t * 2 + u.delay * 40))); });
+    if (V) {
+      const cs = Math.max(0.0001, V.core ?? 1), bs = V.badge ?? cs;
+      core.scale.setScalar(cs); ico.scale.setScalar(cs); coreGlow.scale.set(22 * cs, 22 * cs, 1); core.visible = ico.visible = coreGlow.visible = cs > 0.001;
+      badge.scale.set(4.4 * bs, 4.4 * bs, 1); badge.visible = bs > 0.01;
+      barRing.scale.set(1, Math.max(0.0001, V.bars ?? 1), 1); barRing.visible = (V.bars ?? 1) > 0.001;
+      if (growth.tube) { const g = Math.max(0, Math.min(1, V.line ?? 1)); growth.tube.geometry.setDrawRange(0, Math.floor(growth.idx * g / 3) * 3); growth.dots.forEach((d) => { d.visible = d.userData.t <= g; }); }
+      flowPts.visible = (V.flows ?? 1) > 0.5;
+    }
 
     // hover
     const hit = pointer.inside && !focus ? pick() : null;
     if (hit !== hovered) { hovered = hit; canvas.style.cursor = hit ? 'pointer' : ''; if (opts.onHover) opts.onHover(hit ? hit.id : null); }
 
-    planets.forEach((p) => {
+    planets.forEach((p, pi) => {
       if (!(focus && p.id === focus)) p.angle += p.speed * dt * motion;
       p.holder.position.set(Math.cos(p.angle) * p.radius, 0, Math.sin(p.angle) * p.radius);
       p.mesh.rotation.y += dt * 0.3 * motion;
       p.hover = lerp(p.hover, (hovered === p || focus === p.id) ? 1 : 0, 0.12);
       p.mat.uniforms.uHover.value = p.hover; const s = 1 + p.hover * 0.35; p.holder.scale.set(s, s, s);
+      if (V && V.planets != null) { const pv = Math.max(0.0001, Array.isArray(V.planets) ? (V.planets.at(pi) ?? 1) : V.planets); p.holder.scale.multiplyScalar(pv); p.holder.visible = pv > 0.001; p.pivot.children.at(0).visible = pv > 0.001; }
     });
 
     // money flow along a curve from each planet to the core
