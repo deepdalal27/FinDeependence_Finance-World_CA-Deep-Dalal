@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-23T12:18:59.520Z",
+  "updatedAt": "2026-11-24T10:22:08.675Z",
   "sources": [
     "NSE",
     "ipopremium.in",
@@ -69,6 +69,22 @@
       "listingDate": "2026-12-04",
       "igUrl": "https://www.investorgain.com/gmp/integris-medtech-ipo/2029/",
       "syncedAt": "2026-11-20T17:59:03.424Z"
+    },
+    {
+      "id": "ig-airpro-technology",
+      "source": "investorgain",
+      "name": "Airpro Technology",
+      "exchange": "NSE SME",
+      "type": "SME",
+      "statusCode": "U",
+      "priceHigh": 99,
+      "lotSize": 1200,
+      "openDate": "2026-11-27",
+      "closeDate": "2026-12-01",
+      "allotmentDate": "2026-12-02",
+      "listingDate": "2026-12-04",
+      "igUrl": "https://www.investorgain.com/gmp/airpro-technology-ipo/2316/",
+      "syncedAt": "2026-11-24T10:22:08.666Z"
     },
     {
       "id": "ig-foodlink-f-b-holdings",
