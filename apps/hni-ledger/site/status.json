@@ -1,1 +1,1 @@
-{"checkedAt":"2026-11-24T20:50:52.688Z","errors":["ipopremium: bot check shown, skipped this run"],"count":35}
+{"checkedAt":"2026-11-25T04:06:21.345Z","errors":["NSE: Could not reach NSE: NSE 403 for https://www.nseindia.com/api/ipo-current-issue; NSE 403 for https://www.nseindia.com/api/all-upcoming-issues?category=ipo","ipopremium: bot check shown, skipped this run"],"count":35}
