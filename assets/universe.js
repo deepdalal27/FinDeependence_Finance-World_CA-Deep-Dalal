@@ -62,11 +62,11 @@ const DESKS = [
     tabs: ['Dashboard', 'IPOs & GMP', 'Deals', 'Calculator', 'Predictor', 'Reports', 'Investors & Brokers', 'Data & Settings'],
     tour: ['What you will receive, pay and earn, per IPO, investor and broker', 'Predictor trained on hundreds of past IPOs', 'Monthly, IPO-wise, investor and broker ledgers'] },
   { id: 'rights', n: '06', name: 'Rights Issue Analyser', long: 'Live rights issues, RE ratings & credit check', color: '#FF9F7A', icon: 'rights', path: 'apps/rights/index.html',
-    plain: 'See every open and upcoming rights issue with a 0–100 rating, a credit check and a plain “apply or sell your RE” action.',
-    feats: ['RE rating 0–100', 'Credit & default check', 'Date-wise subscription', 'Volume & highs / lows', 'TERP · RE fair value', 'Calendar'],
-    steps: ['Open the ⭐ RE Ratings tab to see every live issue scored out of 100.', 'Tap “Full analysis →” on an issue for the action if you hold the shares, and if you don’t.', 'Use Subscription, Volume & Highs/Lows and Calendar for the details.'],
+    plain: 'See every open and upcoming rights issue with a 0–100 rating, a credit check and a plain “apply or sell your RE” action, then work out exactly what your money gets you.',
+    feats: ['RE rating 0–100', 'Credit & default check', 'Investment calculator + PDF', 'Date-wise subscription', 'Volume & highs / lows', 'TERP · RE fair value', 'Calendar'],
+    steps: ['Open the ⭐ RE Ratings tab to see every live issue scored out of 100.', 'Tap “Full analysis →” on an issue for the action if you hold the shares, and if you don’t.', 'Tap “💰 Calculate” on an issue, enter your amount and get shares, cost, profit, break-even and a PDF report.', 'Use Subscription, Volume & Highs/Lows and Calendar for the details.'],
     tabs: ['Open', 'Upcoming', 'Closed', 'RE Ratings', 'Subscription', 'Volume & Highs/Lows', 'Calendar'],
-    tour: ['Every rights issue scored 0–100 with a 5-star rating', 'Credit rating and default history from the agencies’ own documents', 'TERP, RE fair value and an entitlement calculator'] },
+    tour: ['Every rights issue scored 0–100 with a 5-star rating', 'Credit rating and default history from the agencies’ own documents', 'Per-issue investment calculator with step-by-step maths and a PDF report'] },
 ];
 const DESK = Object.fromEntries(DESKS.map((d) => [d.id, d]));
 
