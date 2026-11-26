@@ -11,7 +11,7 @@
 | 03 | **Max-Profit Planner** | 4-number calculator, profit at every subscription level, compare IPOs on one amount, PDF | `#/desk/max-profit` | IPO-Max-Profit-FinDeependece-CA_Deep_Dalal |
 | 04 | **HNI IPO Ledger** | sHNI / bHNI applications across family accounts, one-click / automatic allotment checks, reports in Excel and PDF | `#/desk/hni-ledger` | Individual-IPO-Filled-Tracker-FinDeependence |
 | 05 | **IPO Deal Desk** | Kostak / Subject-to / premium deals with investors and brokers, settlements, predictor, ledgers | `#/desk/deal-desk` | IPO_Profit_Loss_FinDeependence |
-| 06 | **Rights Issue Analyser** | Live rights issues, 0–100 RE ratings, credit and default check, subscription, volume, highs and lows | `#/desk/rights` | Right-Issue-Analysis-by-FinDeependence-CA-Deep-Dalal |
+| 06 | **Rights Issue Analyser** | Live rights issues, 0–100 RE ratings, credit and default check, per-issue investment calculator with PDF report, subscription, volume, highs and lows | `#/desk/rights` | Right-Issue-Analysis-by-FinDeependence-CA-Deep-Dalal |
 
 Every desk keeps **all** of its original features. Each one runs its own original code, unchanged apart from the small edits listed under [What changed in the desks](#what-changed-in-the-desks).
 
